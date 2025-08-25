@@ -74,6 +74,7 @@ LLMs don’t fail loudly — they **hallucinate, regress, or leak data** silentl
 git clone https://github.com/yourname/ai-sentinel
 cd ai-sentinel
 docker compose up --build
+```
 
 
   • Visit http://localhost:8000 → Dashboard
@@ -88,15 +89,17 @@ Point to the built-in demo endpoints:
   • Inference: http://api:8000/demo/infer
 
 
-
+```
 curl -X POST http://localhost:8000/v1/projects \
   -H "Content-Type: application/json" \
   -d '{"name":"demo","dataset_url":"http://api:8000/demo/tests","inference_url":"http://api:8000/demo/infer"}'
+```
 
+```
 curl -X POST http://localhost:8000/v1/runs \
   -H "Content-Type: application/json" \
   -d '{"project_id":"<project-id>"}'
-
+```
 
 Then refresh the dashboard (/) or check GET /v1/runs/<id>/report.
 
