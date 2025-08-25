@@ -6,6 +6,9 @@
 
 ---
 
+![Dashboard Screenshot](assets/dash-screenshot.png)
+
+
 ## 🚨 Why AI-Sentinel?
 
 LLMs don’t fail loudly — they **hallucinate, regress, or leak data** silently.  
