@@ -123,7 +123,4 @@ The result: you get **one containerized service + one database** that can run on
 MIT
 ---
 
-⚡ This positions **AI-Sentinel** as a *self-hosted, lean alternative to LangSmith & friends* with a clear **Evaluate · Monitor · Guard** tagline.  
-
-Do you also want me to bake this new README **into your code bundle** and update the dashboard branding (logo/title) to say **AI-Sentinel** instead of “LLM Eval Service”?
 
