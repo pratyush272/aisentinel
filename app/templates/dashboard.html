@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Sentinel · Dashboard</title>
+    <!-- Tailwind via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: { brand: { DEFAULT: '#0ea5e9' } }
+          }
+        }
+      }
+    </script>
+  </head>
+  <body class="bg-gray-50 text-gray-900">
+    <div class="max-w-7xl mx-auto px-4 py-8">
+      <header class="flex items-center justify-between mb-6">
+        <div class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-2xl bg-brand/10 grid place-items-center">
+            <span class="font-bold text-brand">∑</span>
+          </div>
+          <h1 class="text-xl sm:text-2xl font-semibold">AI SENTINEL</h1>
+          <span class="hidden sm:inline text-sm text-gray-500">v0.1</span>
+        </div>
+        <nav class="flex items-center gap-3">
+          <a href="/docs" class="text-sm px-3 py-2 rounded-lg bg-white shadow-sm hover:shadow text-gray-700">API Docs</a>
+          <a href="https://localhost:8000" class="hidden sm:inline text-sm px-3 py-2 rounded-lg bg-white shadow-sm text-gray-400 pointer-events-none">Self-hosted</a>
+        </nav>
+      </header>
+
+      <section class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+        <div class="bg-white rounded-2xl shadow p-5">
+          <div class="text-sm text-gray-500">Projects</div>
+          <div class="mt-1 text-2xl font-semibold">{{ stats.projects }}</div>
+        </div>
+        <div class="bg-white rounded-2xl shadow p-5">
+          <div class="text-sm text-gray-500">Runs (all time)</div>
+          <div class="mt-1 text-2xl font-semibold">{{ stats.runs }}</div>
+        </div>
+        <div class="bg-white rounded-2xl shadow p-5">
+          <div class="text-sm text-gray-500">Avg Pass Rate (recent)</div>
+          <div class="mt-1 text-2xl font-semibold">
+            {% if stats.avg_pass is not none %}{{ (stats.avg_pass * 100) | round(1) }}%{% else %}—{% endif %}
+          </div>
+        </div>
+      </section>
+
+      <section class="bg-white rounded-2xl shadow overflow-hidden">
+        <div class="flex items-center justify-between px-5 py-4 border-b">
+          <h2 class="font-semibold">Recent Runs</h2>
+          <div class="text-sm text-gray-500">Last {{ runs|length }} runs</div>
+        </div>
+        <div class="overflow-x-auto">
+          <table class="min-w-full text-sm">
+            <thead class="bg-gray-50">
+              <tr>
+                <th class="px-5 py-3 text-left font-medium text-gray-600">Run ID</th>
+                <th class="px-5 py-3 text-left font-medium text-gray-600">Project</th>
+                <th class="px-5 py-3 text-left font-medium text-gray-600">Tag</th>
+                <th class="px-5 py-3 text-left font-medium text-gray-600">Status</th>
+                <th class="px-5 py-3 text-left font-medium text-gray-600">Started</th>
+                <th class="px-5 py-3 text-left font-medium text-gray-600">Finished</th>
+                <th class="px-5 py-3 text-left font-medium text-gray-600">Pass Rate</th>
+                <th class="px-5 py-3 text-left font-medium text-gray-600">Report</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y">
+              {% for row in runs %}
+              <tr class="hover:bg-gray-50">
+                <td class="px-5 py-3 font-mono text-xs">{{ row.run.id[:8] }}</td>
+                <td class="px-5 py-3">{{ row.project.name }}</td>
+                <td class="px-5 py-3">{{ row.run.tag or '—' }}</td>
+                <td class="px-5 py-3">
+                  <span class="px-2 py-1 rounded-full text-xs
+                    {% if row.run.status == 'done' %} bg-green-100 text-green-700
+                    {% elif row.run.status == 'running' %} bg-yellow-100 text-yellow-700
+                    {% elif row.run.status == 'queued' %} bg-blue-100 text-blue-700
+                    {% else %} bg-red-100 text-red-700 {% endif %}">{{ row.run.status }}</span>
+                </td>
+                <td class="px-5 py-3">{{ row.run.started_at or '—' }}</td>
+                <td class="px-5 py-3">{{ row.run.finished_at or '—' }}</td>
+                <td class="px-5 py-3">
+                  {% if row.pass_rate is not none %}
+                    {{ (row.pass_rate * 100) | round(1) }}%
+                  {% else %}—{% endif %}
+                </td>
+                <td class="px-5 py-3">
+                  <a href="/v1/runs/{{ row.run.id }}/report"
+                     class="text-brand hover:underline">JSON</a>
+                </td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <section class="mt-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div class="bg-white rounded-2xl shadow p-5">
+          <h3 class="font-semibold mb-2">Quick Start</h3>
+          <ol class="list-decimal list-inside text-sm text-gray-700 space-y-1">
+            <li>Create a project via <code class="px-1 py-0.5 bg-gray-100 rounded">POST /v1/projects</code></li>
+            <li>Kick a run via <code class="px-1 py-0.5 bg-gray-100 rounded">POST /v1/runs</code></li>
+            <li>View the report here or at <code class="px-1 py-0.5 bg-gray-100 rounded">/v1/runs/&lt;id&gt;/report</code></li>
+          </ol>
+        </div>
+        <div class="bg-white rounded-2xl shadow p-5">
+          <h3 class="font-semibold mb-2">Demo Endpoints</h3>
+          <p class="text-sm text-gray-700">Use these to test the service immediately:</p>
+          <ul class="mt-2 text-sm text-gray-700 list-disc list-inside">
+            <li><code>/demo/tests</code> → sample dataset</li>
+            <li><code>/demo/infer</code> → mock LLM inference</li>
+          </ul>
+          <p class="mt-2 text-xs text-gray-500">Point your project to these URLs and run an end-to-end demo.</p>
+        </div>
+      </section>
+
+      <footer class="mt-10 text-center text-xs text-gray-500">
+        Built with FastAPI + Postgres · Tailwind UI · self-hosted
+      </footer>
+    </div>
+  </body>
+</html>
