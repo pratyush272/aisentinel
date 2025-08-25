@@ -104,18 +104,18 @@ curl -X POST http://localhost:8000/v1/runs \
 Then refresh the dashboard (/) or check GET /v1/runs/<id>/report.
 
 
-🏗️ Architecture & Stack
+## 🏗️ Architecture & Stack
 
-AI-Sentinel is designed to stay lean but extensible — it’s not a research prototype glued together, and it’s not a monolith with a dozen moving parts. The stack is opinionated in a “just enough infra” way:
-	•	FastAPI – one service, async-first, doubles as API and dashboard host. BackgroundTasks handle runs without dragging in Celery/Redis until you truly need them.
-	•	Postgres + pgvector – one database does it all: relational state, results, and (optionally) embeddings for semantic similarity. No dual-store complexity.
-	•	SQLAlchemy 2.0 (async) – modern ORM patterns, type hints, and clean schema migrations when you grow.
-	•	Tailwind dashboard – not a toy Swagger screen, but not an enterprise BI monster either; just enough UX to see runs, pass rates, and recent regressions at a glance.
-	•	Checks as Python modules – each check (JSON validity, regex, PII, similarity, etc.) is a self-contained function returning a structured outcome. Easy to extend, drop in, or disable via thresholds.
-	•	httpx clients – clean async calls to your dataset & inference endpoints; HMAC signing optional for real-world pipelines.
+AI-Sentinel is designed to stay **lean but extensible** — it’s not a research prototype glued together, and it’s not a monolith with a dozen moving parts. The stack is opinionated in a *“just enough infra”* way:
 
-The result: you get one containerized service + one database that can run on a laptop, in CI, or on a production cluster. It’s small enough to understand in an afternoon, but structured so you can evolve it into a team-grade system (add a worker, plug into Prometheus, wire Slack alerts) without rewrites.
+- **FastAPI** – one service, async-first, doubles as API and dashboard host. BackgroundTasks handle runs without dragging in Celery/Redis until you truly need them.  
+- **Postgres + pgvector** – one database does it all: relational state, results, and (optionally) embeddings for semantic similarity. No dual-store complexity.  
+- **SQLAlchemy 2.0 (async)** – modern ORM patterns, type hints, and clean schema migrations when you grow.  
+- **Tailwind dashboard** – not a toy Swagger screen, but not an enterprise BI monster either; just enough UX to see runs, pass rates, and recent regressions at a glance.  
+- **Checks as Python modules** – each check (JSON validity, regex, PII, similarity, etc.) is a self-contained function returning a structured outcome. Easy to extend, drop in, or disable via thresholds.  
+- **httpx clients** – clean async calls to your dataset & inference endpoints; HMAC signing optional for real-world pipelines.  
 
+The result: you get **one containerized service + one database** that can run on a laptop, in CI, or on a production cluster. It’s small enough to understand in an afternoon, but structured so you can evolve it into a team-grade system (add a worker, plug into Prometheus, wire Slack alerts) without rewrites.
 
 
 📜 License
